@@ -45,17 +45,15 @@
             return lastDigit % 2 === 0; // Check if even
         }
 
-        // API key
-        const apiKey = '9sOx2d1gWYZrKY0uD4hCbOMIQzLcL4KQ';
-        const apiUrl = 'https://api.apilayer.com/fixer/latest';
+        // Call local backend API instead of external API directly
+        const apiUrl = '/api/rates'; // Use local backend proxy
 
-        // Fetch data from API
+        // Fetch data from local backend API
         fetch(apiUrl, {
             method: 'GET',
             headers: {
-                'apikey': apiKey
-            },
-            redirect: 'follow'
+                'Content-Type': 'application/json'
+            }
         })
         .then(response => {
             if (!response.ok) {
