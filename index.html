@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forex Rates Table</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .red-border {
+            border: 2px solid red !important;
+        }
+    </style>
+</head>
+<body>
+    <h1>Forex Rates Table</h1>
+    <table id="ratesTable">
+        <thead>
+            <tr>
+                <th>Currency</th>
+                <th>Original Rate</th>
+                <th>Modified Rate (+10.0002)</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        // Function to check if a value is an even number
+        function isEven(value) {
+            const valueStr = value.toFixed(4); // Match display format
+            const lastDigitChar = valueStr[valueStr.length - 1]; // Get last character
+            const lastDigit = parseInt(lastDigitChar, 10); // Convert to integer
+            return lastDigit % 2 === 0; // Check if even
+        }
+
+        // API key
+        const apiKey = '9sOx2d1gWYZrKY0uD4hCbOMIQzLcL4KQ';
+        const apiUrl = 'https://api.apilayer.com/fixer/latest';
+
+        // Fetch data from API
+        fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'apikey': apiKey
+            },
+            redirect: 'follow'
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('API request failed: ' + response.status);
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Save original rates to variable
+            const originalRates = data.rates;
+
+            // Create new variable with +10.0002 added to each rate
+            const modifiedRates = {};
+            for (const currency in originalRates) {
+                modifiedRates[currency] = originalRates[currency] + 10.0002;
+            }
+
+            // Display in table
+            const tableBody = document.querySelector('#ratesTable tbody');
+            for (const currency in originalRates) {
+                const row = document.createElement('tr');
+
+                // Currency cell
+                const currencyCell = document.createElement('td');
+                currencyCell.textContent = currency;
+                row.appendChild(currencyCell);
+
+                // Original rate cell
+                const originalCell = document.createElement('td');
+                const originalValue = originalRates[currency];
+                originalCell.textContent = originalValue.toFixed(4); // Display with 4 decimal places
+                if (isEven(originalValue) || currency === 'HKD') {
+                    originalCell.classList.add('red-border');
+                }
+                row.appendChild(originalCell);
+
+                // Modified rate cell
+                const modifiedCell = document.createElement('td');
+                const modifiedValue = modifiedRates[currency];
+                modifiedCell.textContent = modifiedValue.toFixed(4); // Display with 4 decimal places
+                if (isEven(modifiedValue) || currency === 'HKD') {
+                    modifiedCell.classList.add('red-border');
+                }
+                row.appendChild(modifiedCell);
+
+                tableBody.appendChild(row);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+            const tableBody = document.querySelector('#ratesTable tbody');
+            const errorRow = document.createElement('tr');
+            const errorCell = document.createElement('td');
+            errorCell.colSpan = 3;
+            errorCell.textContent = 'Error loading data. Please check the API key and try again.';
+            errorRow.appendChild(errorCell);
+            tableBody.appendChild(errorRow);
+        });
+    </script>
+</body>
+</html>
