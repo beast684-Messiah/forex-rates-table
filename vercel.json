@@ -11,8 +11,5 @@
       "src": "/(.*)",
       "dest": "/server.js"
     }
-  ],
-  "env": {
-    "FIXER_API_KEY": "@fixer-api-key"
-  }
+  ]
 } 
