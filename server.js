@@ -17,6 +17,11 @@ if (!API_KEY) {
 // Serve static files
 app.use(express.static(path.join(__dirname)));
 
+// Explicit route for root path
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
 // API proxy endpoint
 app.get('/api/rates', (req, res) => {
     const options = {
@@ -51,4 +56,7 @@ app.get('/api/rates', (req, res) => {
 
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
-}); 
+});
+
+// Export for Vercel
+module.exports = app; 
